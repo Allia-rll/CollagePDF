@@ -17,6 +17,8 @@ import { useAttchStore } from "@/store/AttchStore";
 import { usePdfStore } from "@/store/pdfStore";
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.PUBLIC_API_URL;
+
 const perPageForm = z.object({
   value: z.string({
     required_error: "Debes seleccionar la cantidad de imagenes por hoja",
@@ -54,7 +56,7 @@ export function CollageForm() {
       });
 
       setOpen(true);
-      await fetch(`http://localhost:5050/${data.type}`, {
+      await fetch(`${API_URL}/${data.type}`, {
         method: "POST",
         body: formData,
       })

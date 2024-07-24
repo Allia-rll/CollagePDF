@@ -4,13 +4,21 @@ import multer from "multer";
 import dotenv from "dotenv";
 import generatePDF from "./services/docs.service.js";
 
+import { handler as ssrHandler } from "./pages/dist/server/entry.mjs";
+
 //Dotenv configuration
 dotenv.config();
+
+//frontend path
+const static_path = process.env.DIST_PATH;
 
 //Express configuration
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.use("/", express.static(static_path));
+app.use(ssrHandler);
 
 //Multer configuration
 const storage = multer.memoryStorage();
@@ -29,7 +37,7 @@ app.post("/perPage", upload.array("images"), async (req, res) => {
     const { mode } = req.body;
     res.setHeader("Content-Type", "application/pdf");
     await generatePDF(files, template, mode, res);
-    console.log("finish")
+    console.log("finish");
     /* res.status(200).json({
       success: true,
       message: "Imagen subida exitosamente",
@@ -49,6 +57,7 @@ app.post("/perPage", upload.array("images"), async (req, res) => {
     });
   }
 });
+
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

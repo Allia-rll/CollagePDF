@@ -1,4 +1,5 @@
 */node_modules/
+*/*/*/node_modules/
 */.vscode/
 
 # build output
@@ -14,8 +15,8 @@
 */pnpm-debug.log*
 
 # environment variables
-*/.env
-*/.env.production
+*/.env*
+
 
 # macOS-specific files
 */.DS_Store
