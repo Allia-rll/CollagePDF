@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import dotenv from "dotenv";
-import generatePDF from "./services/docs.service.js";
+import { perPagePDF, rowsColPDF} from "./services/docs.service.js";
 
 import { handler as ssrHandler } from "./pages/dist/server/entry.mjs";
 
@@ -36,13 +36,8 @@ app.post("/perPage", upload.array("images"), async (req, res) => {
     };
     const { mode } = req.body;
     res.setHeader("Content-Type", "application/pdf");
-    await generatePDF(files, template, mode, res);
+    await perPagePDF(files, template, mode, res);
     console.log("finish");
-    /* res.status(200).json({
-      success: true,
-      message: "Imagen subida exitosamente",
-      files: files,
-    }); */
   } catch (err) {
     console.log(err);
     if (err instanceof Error) {
@@ -58,6 +53,31 @@ app.post("/perPage", upload.array("images"), async (req, res) => {
   }
 });
 
+app.post("/rowscol", upload.array("images"), async (req, res) => {
+  try {
+    const { files } = req;
+    const mode_data = JSON.parse(req.body.mode_data);
+    const template = {
+      type: "rowscol",
+      value: mode_data,
+    };
+    const { mode } = req.body;
+    res.setHeader("Content-Type", "application/pdf");
+    await rowsColPDF(files, template, mode, res);
+  } catch (err) {
+    console.log(err);
+    if (err instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: err.message,
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: "Error al crear el pdf",
+    });
+  }
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

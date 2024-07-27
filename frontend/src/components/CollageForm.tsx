@@ -16,6 +16,7 @@ import { PerpagForm } from "./PerpagForm";
 import { useAttchStore } from "@/store/AttchStore";
 import { usePdfStore } from "@/store/pdfStore";
 import { useEffect, useState } from "react";
+import { RowsColForm } from "./RowsColForm";
 
 const API_URL = import.meta.env.PUBLIC_API_URL;
 
@@ -25,15 +26,24 @@ const perPageForm = z.object({
   }),
 });
 
+const rowscolsForm = z.object({
+  rows: z.string().refine((val) => Number(val) >= 1, {
+    message: "Debes seleccionar al menos una fila",
+  }),
+  cols: z.string().refine((val) => Number(val) >= 1, {
+    message: "Debes seleccionar al menos una columna",
+  }),
+});
+
 const FormSchema = z.object({
   imgs: z.number().min(1, "Debes seleccionar al menos una imagen"),
-  type: z.enum(["perPage"], {
+  type: z.enum(["perPage", "rowscol"], {
     required_error: "Debes seleccionar el tipo de collage",
   }),
   mode: z.enum(["fit", "fill", "stretch"], {
     required_error: "Debes seleccionar un modo de imagen",
   }),
-  mode_data: z.union([perPageForm, z.string()]),
+  mode_data: z.union([perPageForm, rowscolsForm]),
 });
 
 export function CollageForm() {
@@ -54,7 +64,6 @@ export function CollageForm() {
       imgs?.forEach((img) => {
         formData.append("images", img.file);
       });
-
       setOpen(true);
       await fetch(`${API_URL}/${data.type}`, {
         method: "POST",
@@ -125,6 +134,9 @@ export function CollageForm() {
               <div className="flex flex-col w-full">
                 <TypeField form={form} />
                 {form.watch("type") === "perPage" && <PerpagForm form={form} />}
+                {form.watch("type") === "rowscol" && (
+                  <RowsColForm form={form} />
+                )}
               </div>
             </div>
             <Button type="submit">Submit</Button>

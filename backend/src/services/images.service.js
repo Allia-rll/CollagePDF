@@ -64,3 +64,22 @@ export async function cropImage(imageFormated, width, height) {
     return new Error("Error cropping images");
   }
 }
+
+export async function rotateImage(imageFormated, angle) {
+  try {
+    //console.log(`Angle: ${angle}`);
+    const buffer = await sharp(imageFormated.buffer).rotate(angle).toBuffer();
+
+    return buffer;
+  } catch (err) {
+    console.log(err);
+    return new Error("Error rotating images");
+  }
+}
+
+export function isRotable(image, width, height) {
+  return (
+    (image.dimensions.width > image.dimensions.height && width < height) ||
+    (image.dimensions.width < image.dimensions.height && width > height)
+  );
+}

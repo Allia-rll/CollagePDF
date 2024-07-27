@@ -1,5 +1,10 @@
 import PDFDocument from "pdfkit";
-import { formatImages, cropImage } from "./images.service.js";
+import {
+  formatImages,
+  cropImage,
+  rotateImage,
+  isRotable,
+} from "./images.service.js";
 
 const pagesSize = {
   A4: "A4",
@@ -38,6 +43,9 @@ const types = {
 
     return { rows, columns };
   },
+  rowscol: (rowscols) => {
+    return { rows: Number(rowscols.rows), columns: Number(rowscols.cols) };
+  },
 };
 
 const modes = {
@@ -52,7 +60,7 @@ const modes = {
   },
 };
 
-async function generatePDF(images, template, mode, res) {
+export async function perPagePDF(images, template, mode, res) {
   let { rows, columns } = types[`${template.type}`](template.value);
 
   if (rows === undefined || columns === undefined) {
@@ -63,12 +71,27 @@ async function generatePDF(images, template, mode, res) {
   const pages = definePages(formatedImgs, template.value, rows, columns);
   console.log(pages);
 
-  console.log(`Rows: ${rows}, Columns: ${columns}`);
+  await generatePDF(formatedImgs, pages, Number(template.value), mode, res);
+}
+
+export async function rowsColPDF(images, template, mode, res) {
+  let { rows, columns } = types[`${template.type}`](template.value);
+
+  if (rows === undefined || columns === undefined) {
+    return new Error("Error formating images");
+  }
+  const formatedImgs = await formatImages(images);
+  //console.log(formatedImgs);
+  const pages = definePages(formatedImgs, rows * columns, rows, columns);
+  console.log(pages);
+
+  await generatePDF(formatedImgs, pages, rows * columns, mode, res);
+}
+
+export async function generatePDF(formatedImgs, pages, perPage, mode, res) {
   const doc = new PDFDocument({ autoFirstPage: false });
   //const writeStream = fs.createWriteStream("output.pdf");
   doc.pipe(res);
-
-  const perPage = template.value;
   let fileIndex = 0;
   for (const page of pages) {
     let imgIndex = 0;
@@ -79,11 +102,17 @@ async function generatePDF(images, template, mode, res) {
       (page.dimension.measures.width - padding * (page.columns - 1)) /
       page.columns;
     //console.log(`Width: ${width}, Height: ${height}`);
-    while (fileIndex < formatedImgs.length && imgIndex < template.value) {
+    while (fileIndex < formatedImgs.length && imgIndex < perPage) {
+      let rotatedImage = formatedImgs[fileIndex];
+
+      if (isRotable(rotatedImage, width, height)) {
+        rotatedImage.buffer = await rotateImage(rotatedImage, 90);
+      }
+
       const image =
         mode === "fill"
-          ? await cropImage(formatedImgs[fileIndex], width, height)
-          : formatedImgs[fileIndex];
+          ? await cropImage(rotatedImage, width, height)
+          : rotatedImage;
       //console.log(`Image ${fileIndex}`);
       //console.log(image);
       const posx = (imgIndex % page.columns) * (width + padding);
@@ -140,5 +169,3 @@ function evaluateSize(landsCounter, perPage) {
   }
   return { name: "portrait", measures: A4measures.portrait };
 }
-
-export default generatePDF;

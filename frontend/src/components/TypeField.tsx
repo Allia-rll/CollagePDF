@@ -30,6 +30,7 @@ export function TypeField({ form }: { form: any }) {
             </FormControl>
             <SelectContent>
               <SelectItem value="perPage">Imagenes por Hoja</SelectItem>
+              <SelectItem value="rowscol">Filas x Columnas</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage />
