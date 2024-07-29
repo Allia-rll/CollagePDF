@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "./ui/input";
 
 const imagesPerPage = ["1", "2", "4", "6", "8", "9", "10", "16", "36"];
 
@@ -24,7 +25,7 @@ export function PerpagForm({ form }: { form: any }) {
       render={({ field }) => (
         <FormItem className="py-2">
           <FormLabel>Imagenes por pagina</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          {/* <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona la cantidad" />
@@ -37,7 +38,14 @@ export function PerpagForm({ form }: { form: any }) {
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
+          <Input
+            {...form.register("mode_data.value")}
+            type="number"
+            placeholder="Numero de imagenes"
+            min={1}
+            max={100}
+          />
           <FormMessage />
         </FormItem>
       )}

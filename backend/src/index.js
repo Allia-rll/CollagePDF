@@ -46,7 +46,7 @@ app.post("/perPage", upload.array("images"), async (req, res) => {
         message: err.message,
       });
     }
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error al crear el pdf",
     });
