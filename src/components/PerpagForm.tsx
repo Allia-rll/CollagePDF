@@ -34,7 +34,7 @@ export function PerpagForm({ form }: PerpagFormProps) {
             </SelectContent>
           </Select> */}
           <Input
-            {...form.register("mode_data.value")}
+            onChange={field.onChange}
             type="number"
             placeholder="Numero de imagenes"
             min={1}

@@ -27,7 +27,7 @@ export function RowsColForm({ form }: RowsColFormProps) {
             <FormItem>
               <FormLabel>Filas</FormLabel>
               <Input
-                {...form.register("mode_data.rows")}
+                onChange={field.onChange}
                 type="number"
                 placeholder="Numero de filas"
                 min={1}
@@ -44,7 +44,7 @@ export function RowsColForm({ form }: RowsColFormProps) {
             <FormItem>
               <FormLabel>Columnas</FormLabel>
               <Input
-                {...form.register("mode_data.cols")}
+                onChange={field.onChange}
                 type="number"
                 placeholder="Numero de columas"
                 min={1}

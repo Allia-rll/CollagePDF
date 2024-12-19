@@ -105,6 +105,17 @@ export function CollageForm({ onLoading }: { onLoading: () => void }) {
     setErr(form.formState.errors.imgs ? true : false);
   }, [form.formState.errors.imgs]);
 
+  useEffect(() => {
+    if (form.watch("type") === "perPage") {
+      form.unregister("mode_data");
+      form.register("mode_data.value");
+    } else if (form.watch("type") === "rowscol") {
+      form.unregister("mode_data");
+      form.register("mode_data.rows");
+      form.register("mode_data.cols");
+    }
+  }, [form.watch("type")]);
+
   return (
     <div className="overflow-hidden bg-white py-2 md:py-6">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
