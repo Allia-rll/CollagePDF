@@ -109,11 +109,20 @@ const PDF = ({
                   <Image
                     key={j}
                     src={img.base64}
-                    style={{
-                      objectFit: imageMode,
-                      width: "100%",
-                      height: "100%",
-                    }}
+                    style={[
+                      {
+                        objectFit: imageMode,
+                        width: "100%",
+                        height: "100%",
+                      },
+                      page.orientation === "portrait"
+                        ? img.dimensions!.height > img.dimensions!.width
+                          ? { transform: "rotate(90deg)" }
+                          : {}
+                        : img.dimensions!.width > img.dimensions!.height
+                        ? { transform: "rotate(90deg)" }
+                        : {},
+                    ]}
                   />
                 </View>
               ))}

@@ -111,7 +111,7 @@ function evaluateSize(
 ): "landscape" | "portrait" {
   console.log(`Lands: ${landsCounter} PerPage: ${perPage}`);
   if (landsCounter > perPage / 2) {
-    return "landscape";
+    return "portrait";
   }
-  return "portrait";
+  return "landscape";
 }
