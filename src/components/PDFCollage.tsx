@@ -5,6 +5,8 @@ import { DocumentArrowDownIcon } from "@heroicons/react/24/solid";
 import { Document, Page, View, Image, pdf } from "@react-pdf/renderer";
 import { Img } from "@/types/ImgType";
 import { Page as PageType } from "@/types/PageType";
+import { getStyleImg } from "@/lib/utils";
+
 export function PDFCollage({
   onReady,
   ready,
@@ -103,26 +105,13 @@ const PDF = ({
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    padding: "5px",
+                    backgroundColor: "red",
                   }}
                 >
                   <Image
                     key={j}
                     src={img.base64}
-                    style={[
-                      {
-                        objectFit: imageMode,
-                        width: "100%",
-                        height: "100%",
-                      },
-                      page.orientation === "portrait"
-                        ? img.dimensions!.height > img.dimensions!.width
-                          ? { transform: "rotate(90deg)" }
-                          : {}
-                        : img.dimensions!.width > img.dimensions!.height
-                        ? { transform: "rotate(90deg)" }
-                        : {},
-                    ]}
+                    style={{ ...getStyleImg(page, img, imageMode) }}
                   />
                 </View>
               ))}
